@@ -1,0 +1,12 @@
+name: transposon_pipeline
+channels:
+  - conda-forge
+  - bioconda
+  - defaults
+
+dependencies:
+  - python=3.11
+  - blast               # blastn + makeblastdb (unpinned version)
+  - perl                # barcode parsing scripts
+  - imagemagick         # PDF -> PNG conversion
+  - r-base              # R base (unpinned - takes best available for your OS)
