@@ -12,7 +12,10 @@ As a first step, please download all files listed below into a separate director
 - `environment.yml`
 - `setup_r_packages.R`
 
-**Scripts that are run by the pipeline:**
+**Scripts that are run by the pipeline and barcode file:**
+
+These should be placed in a subdirectory named /scripts_and_barcodes
+- 'barcodes.txt'
 - `FastQ-reads_to_barcode_FastA.pl`
 - `blast_read_output_with_barcode.pl`
 - `plot_genomic_region.R`
@@ -41,7 +44,7 @@ Rscript setup_r_packages.R
 
 ## Input Files
 
-Once all environments are set up and activated, download a GenBank flat file (`.gbk` or `.gbff`) for the genome you would like to query for transposon insertions. This can be either a draft genome or a complete genome, but make sure nucleotide sequences are included in the `.gbk`/`.gbff` file. Also download Nanopore read files in FastQ format to submit to the pipeline.
+Once all environments are set up and activated, download a GenBank flat file (`.gbk` or `.gbff`) for the genome you would like to query for transposon insertions. This can be either a draft genome or a complete genome, but make sure nucleotide sequences are included in the `.gbk`/`.gbff` file. Place this file in a separate subdirectory named '/genomes'. Also download Nanopore read files in FastQ format to submit to the pipeline, these can be placed anywhere as long as the full path is given as input to the shell script.
 
 ---
 
