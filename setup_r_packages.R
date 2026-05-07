@@ -11,16 +11,22 @@
 #   Rscript setup_r_packages.R
 # ============================================================
 
+# Packages required for plot_genomic_region.R and the pipeline
 cran_packages <- c(
-  "optparse",       # CLI args for plot_genomic_region.R
+  "optparse",       # CLI argument parsing
   "ggplot2",        # plotting
   "gggenes",        # gene arrow diagrams
-  "dplyr",          # data wrangling
-  "shiny",          # Shiny app
-  "DT",             # interactive tables
-  "googlesheets4",  # Google Sheets access
-  "rsconnect"       # deploy to shinyapps.io
+  "dplyr"           # data wrangling
 )
+
+# Uncomment below if you are also setting up the Shiny app
+# shiny_packages <- c(
+#   "shiny",          # Shiny app
+#   "DT",             # interactive tables
+#   "googlesheets4",  # Google Sheets access
+#   "rsconnect"       # deploy to shinyapps.io
+# )
+# cran_packages <- c(cran_packages, shiny_packages)
 
 cat("Checking and installing CRAN packages...\n\n")
 
