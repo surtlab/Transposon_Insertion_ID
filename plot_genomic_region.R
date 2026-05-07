@@ -346,18 +346,42 @@ feat_df <- feat_df %>%
 cat("Annotated features (deduplicated):", nrow(feat_df), "\n")
 
 # ── Find flanking genes ───────────────────────────────────────
-upstream <- feat_df %>%
-  filter(end <= region_start) %>%
-  arrange(desc(end)) %>%
-  slice_head(n = n_flank)
-
-downstream <- feat_df %>%
-  filter(start >= region_end) %>%
-  arrange(start) %>%
-  slice_head(n = n_flank)
-
+# First identify genes overlapping the insertion region
 overlapping <- feat_df %>%
   filter(start < region_end & end > region_start)
+
+# Determine the strand of the hit gene(s).
+# If the insertion overlaps multiple genes on different strands,
+# the majority strand wins; ties default to positive.
+if (nrow(overlapping) > 0) {
+  strand_votes <- sum(overlapping$strand_dir)
+  hit_strand   <- if (strand_votes >= 0) 1L else -1L
+} else {
+  hit_strand <- 1L  # no overlapping gene — default to positive
+}
+
+cat("Hit gene strand:", if (hit_strand == 1) "positive (+)" else "negative (-)", "\n")
+
+# Genes left of the region (lower coordinates)
+left_genes <- feat_df %>%
+  filter(end <= region_start) %>%
+  arrange(desc(end))          # closest first
+
+# Genes right of the region (higher coordinates)
+right_genes <- feat_df %>%
+  filter(start >= region_end) %>%
+  arrange(start)              # closest first
+
+# Assign upstream/downstream based on strand:
+#   Positive strand: upstream = lower coords, downstream = higher coords
+#   Negative strand: upstream = higher coords, downstream = lower coords
+if (hit_strand == 1L) {
+  upstream   <- slice_head(left_genes,  n = n_flank)
+  downstream <- slice_head(right_genes, n = n_flank)
+} else {
+  upstream   <- slice_head(right_genes, n = n_flank)
+  downstream <- slice_head(left_genes,  n = n_flank)
+}
 
 cat("Upstream   :", nrow(upstream),
     paste(upstream$locus_tag, collapse = ", "), "\n")
@@ -481,9 +505,9 @@ p <- ggplot(plot_genes,
 
   scale_fill_manual(
     values = pal,
-    labels = c(upstream   = "Upstream",
-               highlight  = "In highlighted region",
-               downstream = "Downstream"),
+    labels = c(upstream   = "Upstream (5' of insertion)",
+               highlight  = "Gene at insertion",
+               downstream = "Downstream (3' of insertion)"),
     name   = "Gene context"
   ) +
   scale_x_continuous(
